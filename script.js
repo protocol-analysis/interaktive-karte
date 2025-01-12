@@ -1,5 +1,5 @@
-// Karte initialisieren
-var map = L.map('map').setView([51.505, 6.0839], 13); // Startpunkt
+// Karte initialisieren und auf Aachen zentrieren
+var map = L.map('map').setView([50.7753, 6.0839], 13); // Aachen Koordinaten und Zoom-Level
 
 // OpenStreetMap Layer hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -32,10 +32,9 @@ function loadMarkers() {
 
             // Event für Entfernen-Button
             marker.on('popupopen', function () {
-                // Wenn das Popup geöffnet wird, den "Entfernen"-Button mit einem Event versehen
                 document.querySelector('.remove-marker').onclick = function () {
                     map.removeLayer(marker); // Marker entfernen
-                    saveMarkers(); // Nach dem Entfernen die Daten aktualisieren
+                    saveMarkers(); // Nach dem Entfernen die Daten im LocalStorage aktualisieren
                 };
             });
         });
@@ -51,10 +50,9 @@ map.on('click', function (e) {
 
     // Event für Entfernen-Button
     marker.on('popupopen', function () {
-        // Wenn das Popup geöffnet wird, den "Entfernen"-Button mit einem Event versehen
         document.querySelector('.remove-marker').onclick = function () {
             map.removeLayer(marker); // Marker entfernen
-            saveMarkers(); // Nach dem Entfernen die Daten aktualisieren
+            saveMarkers(); // Nach dem Entfernen die Daten im LocalStorage aktualisieren
         };
     });
 
@@ -63,3 +61,4 @@ map.on('click', function (e) {
 
 // Marker aus LocalStorage laden
 loadMarkers();
+
