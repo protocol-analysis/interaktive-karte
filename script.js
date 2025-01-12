@@ -8,8 +8,17 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Klick-Event: Marker hinzufügen
-map.on('click', function(e) {
-    L.marker(e.latlng).addTo(map)
-        .bindPopup("Marker bei " + e.latlng.toString())
-        .openPopup();
+map.on('click', function (e) {
+    var marker = L.marker(e.latlng).addTo(map); // Marker hinzufügen
+
+    // Popup hinzufügen
+    marker.bindPopup("Marker bei " + e.latlng.toString() + "<br><button id='remove-marker'>Entfernen</button>").openPopup();
+
+    // Klick-Event für das Entfernen des Markers
+    marker.on('popupopen', function () {
+        // Button im Popup finden und ein Event hinzufügen
+        document.getElementById('remove-marker').onclick = function () {
+            map.removeLayer(marker); // Marker entfernen
+        };
+    });
 });
