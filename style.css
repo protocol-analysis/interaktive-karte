@@ -1,4 +1,4 @@
 #map {
-    height: 500px;
-    width: 100%;
+    height: 100vh; /* Setze die Höhe auf 100% der Viewport-Höhe */
+    width: 100%;   /* Setze die Breite auf 100% */
 }
