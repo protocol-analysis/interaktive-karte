@@ -1,5 +1,5 @@
 // Karte initialisieren
-var map = L.map('map').setView([51.505, -0.09], 13); // Startpunkt (Breiten- und Längengrad)
+var map = L.map('map').setView([51.505, -0.09], 13); // Startpunkt
 
 // OpenStreetMap Layer hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -15,12 +15,14 @@ function saveMarkers() {
             markers.push(layer.getLatLng()); // Marker-Positionen speichern
         }
     });
-    localStorage.setItem('markers', JSON.stringify(markers)); // Im LocalStorage speichern
+    localStorage.setItem('markers', JSON.stringify(markers)); // Marker im LocalStorage speichern
+    console.log("Markers gespeichert:", markers); // Debug: Speichern überprüfen
 }
 
 // Funktion: Marker laden
 function loadMarkers() {
     var markers = JSON.parse(localStorage.getItem('markers'));
+    console.log("Markers geladen:", markers); // Debug: Laden überprüfen
     if (markers) {
         markers.forEach(function (position) {
             var marker = L.marker(position).addTo(map);
