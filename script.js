@@ -28,11 +28,12 @@ function loadMarkers() {
             var marker = L.marker(position).addTo(map);
 
             // Popup mit Entfernen-Button hinzufügen
-            marker.bindPopup("Marker bei " + position.toString() + "<br><button id='remove-marker'>Entfernen</button>").openPopup();
+            marker.bindPopup("Marker bei " + position.toString() + "<br><button class='remove-marker'>Entfernen</button>").openPopup();
 
             // Event für Entfernen-Button
             marker.on('popupopen', function () {
-                document.getElementById('remove-marker').onclick = function () {
+                // Wenn das Popup geöffnet wird, den "Entfernen"-Button mit einem Event versehen
+                document.querySelector('.remove-marker').onclick = function () {
                     map.removeLayer(marker); // Marker entfernen
                     saveMarkers(); // Nach dem Entfernen die Daten aktualisieren
                 };
@@ -46,11 +47,12 @@ map.on('click', function (e) {
     var marker = L.marker(e.latlng).addTo(map);
 
     // Popup mit Entfernen-Button hinzufügen
-    marker.bindPopup("Marker bei " + e.latlng.toString() + "<br><button id='remove-marker'>Entfernen</button>").openPopup();
+    marker.bindPopup("Marker bei " + e.latlng.toString() + "<br><button class='remove-marker'>Entfernen</button>").openPopup();
 
     // Event für Entfernen-Button
     marker.on('popupopen', function () {
-        document.getElementById('remove-marker').onclick = function () {
+        // Wenn das Popup geöffnet wird, den "Entfernen"-Button mit einem Event versehen
+        document.querySelector('.remove-marker').onclick = function () {
             map.removeLayer(marker); // Marker entfernen
             saveMarkers(); // Nach dem Entfernen die Daten aktualisieren
         };
