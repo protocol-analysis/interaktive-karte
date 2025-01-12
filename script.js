@@ -2,10 +2,12 @@
 var map = L.map('map').setView([50.7753, 6.0839], 13); // Aachen Koordinaten und Zoom-Level
 
 // OpenStreetMap Layer hinzufügen
-L.tileLayer('https://{s}.tile.stamen.com/toner/{z}/{x}/{y}.png', {
-    maxZoom: 18,
-    attribution: '&copy; <a href="http://stamen.com">Stamen Design</a> &amp; <a href="http://openstreetmap.org/copyright">OpenStreetMap</a>'
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18,  // Setze das maximale Zoom-Level
+    minZoom: 10,  // Setze das minimale Zoom-Level (optional)
+    attribution: '© OpenStreetMap'
 }).addTo(map);
+
 
 // Funktion: Marker speichern
 function saveMarkers() {
