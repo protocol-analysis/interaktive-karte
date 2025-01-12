@@ -1,5 +1,5 @@
 // Karte initialisieren
-var map = L.map('map').setView([51.505, -0.09], 13); // Startpunkt
+var map = L.map('map').setView([51.505, 6.0839], 13); // Startpunkt
 
 // OpenStreetMap Layer hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
