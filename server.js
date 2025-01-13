@@ -1,3 +1,9 @@
+// Einfacher Root-Handler
+app.get("/", (req, res) => {
+    res.send("Hallo von deinem Node.js-Server!");
+});
+
+
 const express = require("express");
 const cors = require("cors");
 
