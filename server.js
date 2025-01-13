@@ -1,37 +1,32 @@
-const express = require('express');
-const cors = require('cors');
+const express = require("express");
+const cors = require("cors");
+
 const app = express();
-
-// Erlaube CORS für alle Anfragen
 app.use(cors());
-app.use(express.json());
+app.use(express.json()); // JSON-Daten im Body verarbeiten
 
-// Simulierter Speicher für Marker
+// Dummy-Datenbank (Marker speichern wir hier)
 let markers = [];
 
-// API-Endpunkte
-
-// Marker abrufen
-app.get('/markers', (req, res) => {
+// API: Alle Marker abrufen
+app.get("/api/markers", (req, res) => {
     res.json(markers);
 });
 
-// Marker hinzufügen
-app.post('/markers', (req, res) => {
-    const marker = req.body;
+// API: Neuen Marker hinzufügen
+app.post("/api/markers", (req, res) => {
+    const marker = req.body; // { lat: ..., lng: ... }
     markers.push(marker);
     res.status(201).json(marker);
 });
 
-// Marker löschen
-app.delete('/markers', (req, res) => {
+// API: Marker entfernen
+app.delete("/api/markers", (req, res) => {
     const { lat, lng } = req.body;
-    markers = markers.filter(marker => marker.lat !== lat || marker.lng !== lng);
-    res.status(200).json({ success: true });
+    markers = markers.filter(m => m.lat !== lat || m.lng !== lng);
+    res.status(200).send();
 });
 
 // Server starten
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-    console.log(`Server läuft auf Port ${PORT}`);
-});
+app.listen(PORT, () => console.log(`Server läuft auf Port ${PORT}`));
