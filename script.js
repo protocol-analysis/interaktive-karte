@@ -1,4 +1,12 @@
-const serverUrl = "https://interaktive-karte.onrender.com/"; // Deine Server-URL
+const serverUrl = "https://interaktive-karte.onrender.com"; // Deine Server-URL
+
+// Karte initialisieren
+const map = L.map('map').setView([51.505, -0.09], 13); // Standardkoordinaten, diese ändern sich später
+
+// Tile Layer für OpenStreetMap hinzufügen
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+}).addTo(map);
 
 // Marker vom Server laden
 async function loadMarkers() {
@@ -8,11 +16,12 @@ async function loadMarkers() {
         const marker = L.marker([position.lat, position.lng]).addTo(map);
 
         // Popup mit Entfernen-Button
-        marker.bindPopup("Marker bei " + position.lat + ", " + position.lng + "<br><button id='remove-marker'>Entfernen</button>");
+        marker.bindPopup(`Marker bei ${position.lat}, ${position.lng}<br><button class="remove-marker">Entfernen</button>`);
 
         // Entfernen-Button
         marker.on('popupopen', function () {
-            document.getElementById('remove-marker').onclick = async function () {
+            const removeButton = document.querySelector('.remove-marker');
+            removeButton.onclick = async function () {
                 await fetch(`${serverUrl}/api/markers`, {
                     method: 'DELETE',
                     headers: { 'Content-Type': 'application/json' },
@@ -37,10 +46,11 @@ async function saveMarker(position) {
 map.on('click', function (e) {
     const position = { lat: e.latlng.lat, lng: e.latlng.lng };
     const marker = L.marker([position.lat, position.lng]).addTo(map);
-    marker.bindPopup("Marker bei " + position.lat + ", " + position.lng + "<br><button id='remove-marker'>Entfernen</button>").openPopup();
+    marker.bindPopup(`Marker bei ${position.lat}, ${position.lng}<br><button class="remove-marker">Entfernen</button>`).openPopup();
 
     marker.on('popupopen', function () {
-        document.getElementById('remove-marker').onclick = async function () {
+        const removeButton = document.querySelector('.remove-marker');
+        removeButton.onclick = async function () {
             await fetch(`${serverUrl}/api/markers`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
@@ -55,5 +65,4 @@ map.on('click', function (e) {
 
 // Marker vom Server laden beim Start
 loadMarkers();
-
 
