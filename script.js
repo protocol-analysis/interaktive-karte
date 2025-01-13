@@ -1,66 +1,59 @@
-// Karte initialisieren und auf Aachen zentrieren
-var map = L.map('map').setView([50.7753, 6.0839], 13); // Aachen Koordinaten und Zoom-Level
+const serverUrl = "https://marker-server.onrender.com"; // Deine Server-URL
 
-// OpenStreetMap Layer hinzufügen
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 18,  // Setze das maximale Zoom-Level
-    minZoom: 10,  // Setze das minimale Zoom-Level (optional)
-    attribution: '© OpenStreetMap'
-}).addTo(map);
+// Marker vom Server laden
+async function loadMarkers() {
+    const response = await fetch(`${serverUrl}/api/markers`);
+    const markers = await response.json();
+    markers.forEach(position => {
+        const marker = L.marker([position.lat, position.lng]).addTo(map);
 
+        // Popup mit Entfernen-Button
+        marker.bindPopup("Marker bei " + position.lat + ", " + position.lng + "<br><button id='remove-marker'>Entfernen</button>");
 
-// Funktion: Marker speichern
-function saveMarkers() {
-    var markers = [];
-    map.eachLayer(function (layer) {
-        if (layer instanceof L.Marker) {
-            markers.push(layer.getLatLng()); // Marker-Positionen speichern
-        }
-    });
-    localStorage.setItem('markers', JSON.stringify(markers)); // Marker im LocalStorage speichern
-    console.log("Markers gespeichert:", markers); // Debug: Speichern überprüfen
-}
-
-// Funktion: Marker laden
-function loadMarkers() {
-    var markers = JSON.parse(localStorage.getItem('markers'));
-    console.log("Markers geladen:", markers); // Debug: Laden überprüfen
-    if (markers) {
-        markers.forEach(function (position) {
-            var marker = L.marker(position).addTo(map);
-
-            // Popup mit Entfernen-Button hinzufügen
-            marker.bindPopup("Marker bei " + position.toString() + "<br><button class='remove-marker'>Entfernen</button>").openPopup();
-
-            // Event für Entfernen-Button
-            marker.on('popupopen', function () {
-                document.querySelector('.remove-marker').onclick = function () {
-                    map.removeLayer(marker); // Marker entfernen
-                    saveMarkers(); // Nach dem Entfernen die Daten im LocalStorage aktualisieren
-                };
-            });
+        // Entfernen-Button
+        marker.on('popupopen', function () {
+            document.getElementById('remove-marker').onclick = async function () {
+                await fetch(`${serverUrl}/api/markers`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(position)
+                });
+                map.removeLayer(marker); // Marker von der Karte entfernen
+            };
         });
-    }
+    });
 }
 
-// Klick-Event: Marker hinzufügen
+// Marker zum Server hinzufügen
+async function saveMarker(position) {
+    await fetch(`${serverUrl}/api/markers`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(position)
+    });
+}
+
+// Marker hinzufügen beim Klick auf die Karte
 map.on('click', function (e) {
-    var marker = L.marker(e.latlng).addTo(map);
+    const position = { lat: e.latlng.lat, lng: e.latlng.lng };
+    const marker = L.marker([position.lat, position.lng]).addTo(map);
+    marker.bindPopup("Marker bei " + position.lat + ", " + position.lng + "<br><button id='remove-marker'>Entfernen</button>").openPopup();
 
-    // Popup mit Entfernen-Button hinzufügen
-    marker.bindPopup("Marker bei " + e.latlng.toString() + "<br><button class='remove-marker'>Entfernen</button>").openPopup();
-
-    // Event für Entfernen-Button
     marker.on('popupopen', function () {
-        document.querySelector('.remove-marker').onclick = function () {
+        document.getElementById('remove-marker').onclick = async function () {
+            await fetch(`${serverUrl}/api/markers`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(position)
+            });
             map.removeLayer(marker); // Marker entfernen
-            saveMarkers(); // Nach dem Entfernen die Daten im LocalStorage aktualisieren
         };
     });
 
-    saveMarkers(); // Marker speichern
+    saveMarker(position); // Marker auf dem Server speichern
 });
 
-// Marker aus LocalStorage laden
+// Marker vom Server laden beim Start
 loadMarkers();
+
 
