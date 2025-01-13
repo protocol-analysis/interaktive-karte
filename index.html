@@ -1,41 +1,33 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Interaktive Karte</title>
-    <!-- Leaflet CSS einbinden -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
-        h1 {
-            margin: 20px 0;
-        }
-        #map {
-            height: 80vh;
-            width: 100%;
-            margin: 0 auto;
-            border: 1px solid #ddd;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-    </style>
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script type="module">
+        // Firebase SDK und Konfiguration
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-app.js";
+        import { getDatabase } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyBD_4HU3O7WuM6wSxxCxl7tLdaDlT0n3Ec",
+            authDomain: "karte-f2c56.firebaseapp.com",
+            databaseURL: "https://karte-f2c56-default-rtdb.europe-west1.firebasedatabase.app",
+            projectId: "karte-f2c56",
+            storageBucket: "karte-f2c56.firebasestorage.app",
+            messagingSenderId: "387611548606",
+            appId: "1:387611548606:web:42b7eef40ebc7c146177ef"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        export const db = getDatabase(app); // Exportieren, damit andere Skripte darauf zugreifen können
+    </script>
 </head>
 <body>
-    <!-- Titel der Seite -->
-    <h1>Muellabfuhr Aachen</h1>
-    
-    <!-- Container für die Karte -->
-    <div id="map"></div>
-
-    <!-- Leaflet JS einbinden -->
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
-    
-    <!-- Dein JavaScript-Code -->
-    <script src="script.js"></script>
+    <div id="map" style="width: 100%; height: 100vh;"></div>
+    <script src="script.js" type="module"></script>
 </body>
 </html>
+
