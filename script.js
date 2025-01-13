@@ -1,68 +1,50 @@
-const serverUrl = "https://interaktive-karte.onrender.com"; // Deine Server-URL
+// Importiere Firebase-Funktionen
+import { ref, push, remove, onValue } from "https://www.gstatic.com/firebasejs/9.6.10/firebase-database.js";
+import { db } from './index.html'; // Importiere die Datenbank-Verbindung
 
 // Karte initialisieren
-const map = L.map('map').setView([50.7753, 6.0839], 15); // Standardkoordinaten, diese ändern sich später
+const map = L.map('map').setView([50.7753, 6.0839], 13); // Auf Aachen zentriert
 
-// Tile Layer für OpenStreetMap hinzufügen
+// OpenStreetMap-Kachel hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-// Marker vom Server laden
-async function loadMarkers() {
-    const response = await fetch(`${serverUrl}/api/markers`);
-    const markers = await response.json();
-    markers.forEach(position => {
-        const marker = L.marker([position.lat, position.lng]).addTo(map);
+// Referenz zu Firebase-Markern
+const markersRef = ref(db, 'markers');
 
-        // Popup mit Entfernen-Button
-        marker.bindPopup(`Marker bei ${position.lat}, ${position.lng}<br><button class="remove-marker">Entfernen</button>`);
-
-        // Entfernen-Button
-        marker.on('popupopen', function () {
-            const removeButton = document.querySelector('.remove-marker');
-            removeButton.onclick = async function () {
-                await fetch(`${serverUrl}/api/markers`, {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(position)
-                });
-                map.removeLayer(marker); // Marker von der Karte entfernen
-            };
+// Marker aus Firebase laden und auf der Karte anzeigen
+onValue(markersRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+        // Alle Marker anzeigen
+        Object.keys(data).forEach(key => {
+            const marker = data[key];
+            const leafletMarker = L.marker([marker.lat, marker.lng])
+                .addTo(map)
+                .bindPopup(`${marker.title} <button onclick="removeMarker('${key}')">Löschen</button>`);
+            leafletMarker.options.markerId = key; // Speichere die ID für die Löschfunktion
         });
-    });
-}
-
-// Marker zum Server hinzufügen
-async function saveMarker(position) {
-    await fetch(`${serverUrl}/api/markers`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(position)
-    });
-}
-
-// Marker hinzufügen beim Klick auf die Karte
-map.on('click', function (e) {
-    const position = { lat: e.latlng.lat, lng: e.latlng.lng };
-    const marker = L.marker([position.lat, position.lng]).addTo(map);
-    marker.bindPopup(`Marker bei ${position.lat}, ${position.lng}<br><button class="remove-marker">Entfernen</button>`).openPopup();
-
-    marker.on('popupopen', function () {
-        const removeButton = document.querySelector('.remove-marker');
-        removeButton.onclick = async function () {
-            await fetch(`${serverUrl}/api/markers`, {
-                method: 'DELETE',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(position)
-            });
-            map.removeLayer(marker); // Marker entfernen
-        };
-    });
-
-    saveMarker(position); // Marker auf dem Server speichern
+    }
 });
 
-// Marker vom Server laden beim Start
-loadMarkers();
+// Funktion: Marker hinzufügen
+map.on('click', (e) => {
+    const { lat, lng } = e.latlng;
+    const title = prompt("Gib einen Titel für den Marker ein:");
+
+    if (title) {
+        push(ref(db, 'markers'), {
+            lat: lat,
+            lng: lng,
+            title: title
+        });
+    }
+});
+
+// Funktion: Marker entfernen
+window.removeMarker = (id) => {
+    remove(ref(db, `markers/${id}`));
+};
+
 
