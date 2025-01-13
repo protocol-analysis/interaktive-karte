@@ -1,4 +1,4 @@
-const serverUrl = "https://interaktive-karte.onrender.com"; // Deine Server-URL
+const serverUrl = "https://interaktive-karte.onrender.com/"; // Deine Server-URL
 
 // Marker vom Server laden
 async function loadMarkers() {
