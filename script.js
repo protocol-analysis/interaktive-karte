@@ -1,7 +1,7 @@
 const serverUrl = "https://interaktive-karte.onrender.com"; // Deine Server-URL
 
 // Karte initialisieren
-const map = L.map('map').setView([51.505, -0.09], 13); // Standardkoordinaten, diese ändern sich später
+const map = L.map('map').setView([50.7753, 6.0839], 13); // Standardkoordinaten, diese ändern sich später
 
 // Tile Layer für OpenStreetMap hinzufügen
 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
