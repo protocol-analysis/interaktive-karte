@@ -4,9 +4,6 @@ const cors = require("cors");
 
 const app = express();
 
-app.get("/", (req, res) => {
-    res.send("Hallo von deinem Node.js-Server!");
-});
 
 
 app.use(cors());
